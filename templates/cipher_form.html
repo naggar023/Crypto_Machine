@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Title }}</title>
+    <style>
+        body {
+            font-family: 'Fira Mono', 'Consolas', 'Monaco', monospace;
+            margin: 0;
+            background: #0f2027;  /* fallback for old browsers */
+            background: linear-gradient(135deg, #0f2027 0%, #2c5364 100%);
+            color: #00ff41;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: rgba(10, 20, 10, 0.95);
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            box-shadow: 0 0 30px #00ff4160;
+            padding: 32px 28px;
+            width: 100%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #00ff41;
+            text-align: center;
+            margin-bottom: 24px;
+            text-shadow: 0 0 8px #00ff41cc;
+            letter-spacing: 2px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #00ff41;
+            letter-spacing: 1px;
+        }
+        textarea, input[type="text"], input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 18px;
+            border: 1px solid #00ff41;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background: #111;
+            color: #00ff41;
+            font-family: inherit;
+            font-size: 1em;
+            outline: none;
+            transition: border 0.2s;
+        }
+        textarea:focus, input[type="text"]:focus, input[type="number"]:focus {
+            border: 1.5px solid #39ff14;
+            background: #181818;
+        }
+        .radio-group label {
+            font-weight: normal;
+            margin-right: 15px;
+            color: #00ff41;
+        }
+        input[type="radio"] {
+            accent-color: #00ff41;
+            margin-right: 5px;
+        }
+        button {
+            background: #111;
+            color: #00ff41;
+            padding: 12px 20px;
+            border: 2px solid #00ff41;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            font-family: inherit;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 0 8px #00ff41cc;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            background: #00ff41;
+            color: #111;
+            box-shadow: 0 0 16px #00ff41;
+        }
+        .home-link {
+            display: block;
+            text-align: center;
+            margin-top: 22px;
+            color: #00ff41;
+            text-decoration: none;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+        .home-link:hover {
+            color: #39ff14;
+            text-decoration: underline;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>{{ .Title }}</h1>
+        <form action="/cipher/{{ .CipherType }}" method="POST">
+            <div>
+                <label for="text">Text:</label>
+                <textarea id="text" name="text" rows="4" required></textarea>
+            </div>
+
+            {{ if .NeedsIntKey }}
+            <div>
+                <label for="key_int">{{ .KeyHint }}:</label>
+                <input type="number" id="key_int" name="key_int" required>
+            </div>
+            {{ else }}
+            <div>
+                <label for="key">{{ .KeyHint }}:</label>
+                <input type="text" id="key" name="key" {{ if ne .CipherType "caesar"}}{{ end }}>
+            </div>
+            {{ end }}
+            
+            <div class="radio-group" style="margin-bottom: 20px;">
+                <label>Operation:</label>
+                <input type="radio" id="encrypt" name="operation" value="encrypt" checked>
+                <label for="encrypt">Encrypt</label>
+                <input type="radio" id="decrypt" name="operation" value="decrypt">
+                <label for="decrypt">Decrypt</label>
+            </div>
+            
+            <button type="submit">Process</button>
+        </form>
+        <a href="/" class="home-link">Back to Home</a>
+    </div>
+</body>
+</html>

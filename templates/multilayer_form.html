@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Title }}</title>
+    <style>
+        body {
+            font-family: 'Fira Mono', 'Consolas', 'Monaco', monospace;
+            margin: 0;
+            background: #111;
+            color: #00ff41;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            letter-spacing: 0.5px;
+        }
+        .container {
+            background: rgba(20, 20, 20, 0.98);
+            padding: 32px 36px;
+            border-radius: 10px;
+            box-shadow: 0 0 32px #00ff4160, 0 0 4px #00ff4120;
+            width: 100%;
+            max-width: 700px;
+            border: 1.5px solid #00ff41;
+        }
+        h1 {
+            color: #00ff41;
+            text-align: center;
+            margin-bottom: 24px;
+            text-shadow: 0 0 8px #00ff41, 0 0 2px #00ff41;
+            font-size: 2.1em;
+            letter-spacing: 2px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #00ff41;
+            text-shadow: 0 0 2px #00ff41;
+        }
+        textarea, input[type="text"], input[type="number"], select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1.5px solid #00ff41;
+            border-radius: 4px;
+            background: #181818;
+            color: #00ff41;
+            font-family: inherit;
+            font-size: 1em;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        textarea:focus, input:focus, select:focus {
+            border-color: #fff;
+            background: #222;
+        }
+        .layer {
+            border: 1.5px solid #00ff41;
+            padding: 18px;
+            margin-bottom: 18px;
+            border-radius: 6px;
+            background: #181818;
+            box-shadow: 0 0 8px #00ff4130;
+        }
+        .layer h3 {
+            margin-top: 0;
+            color: #00ff41;
+            text-shadow: 0 0 4px #00ff41;
+            font-size: 1.15em;
+        }
+        .radio-group label {
+            font-weight: normal;
+            margin-right: 18px;
+            color: #00ff41;
+        }
+        input[type="radio"] {
+            accent-color: #00ff41;
+            margin-right: 6px;
+        }
+        button {
+            background: #111;
+            color: #00ff41;
+            padding: 12px 20px;
+            border: 1.5px solid #00ff41;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.08em;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 8px;
+            margin-bottom: 0;
+            box-shadow: 0 0 8px #00ff4130;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+        button:hover {
+            background: #00ff41;
+            color: #111;
+            border-color: #fff;
+        }
+        #addLayerBtn {
+            background: #111;
+            color: #00e0d6;
+            border-color: #00e0d6;
+            box-shadow: 0 0 8px #00e0d680;
+            margin-bottom: 18px;
+        }
+        #addLayerBtn:hover {
+            background: #00e0d6;
+            color: #111;
+            border-color: #fff;
+        }
+        .removeLayerBtn {
+            background: #111;
+            color: #ff0040;
+            border-color: #ff0040;
+            box-shadow: 0 0 8px #ff004080;
+            font-size: 0.9em;
+            padding: 6px 14px;
+            width: auto;
+            margin-top: 8px;
+        }
+        .removeLayerBtn:hover {
+            background: #ff0040;
+            color: #111;
+            border-color: #fff;
+        }
+        .home-link {
+            display: block;
+            text-align: center;
+            margin-top: 24px;
+            color: #00e0d6;
+            text-decoration: none;
+            font-size: 1.1em;
+            text-shadow: 0 0 4px #00e0d6;
+            transition: color 0.2s;
+        }
+        .home-link:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        .key-input, .key-int-input { display: none; }
+        ::selection {
+            background: #00ff41;
+            color: #111;
+        }
+        /* Optional: flicker animation for h1 */
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            45% { opacity: 0.85; }
+            50% { opacity: 0.6; }
+            55% { opacity: 0.85; }
+        }
+        h1 {
+            animation: flicker 2.5s infinite alternate;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ .Title }}</h1>
+        <form action="/multilayer" method="POST" id="multilayerForm">
+            <div>
+                <label for="text">Initial Text:</label>
+                <textarea id="text" name="text" rows="3" required></textarea>
+            </div>
+
+            <div id="layers-container">
+                </div>
+            <button type="button" id="addLayerBtn">Add Cipher Layer</button>
+            <input type="hidden" name="cipher_count" id="cipher_count" value="0">
+
+
+            <div class="radio-group" style="margin-bottom: 20px;">
+                <label>Overall Operation:</label>
+                <input type="radio" id="multi_encrypt" name="operation" value="encrypt" checked>
+                <label for="multi_encrypt">Encrypt</label>
+                <input type="radio" id="multi_decrypt" name="operation" value="decrypt">
+                <label for="multi_decrypt">Decrypt</label>
+            </div>
+            
+            <button type="submit">Process Multilayer</button>
+        </form>
+        <a href="/" class="home-link">Back to Home</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const layersContainer = document.getElementById('layers-container');
+            const addLayerBtn = document.getElementById('addLayerBtn');
+            const cipherCountInput = document.getElementById('cipher_count');
+            let layerCount = 0;
+            const maxLayers = {{.MaxLayers}};
+
+            function addLayer() {
+                if (layerCount >= maxLayers) {
+                    alert('Maximum number of layers reached (' + maxLayers + ').');
+                    return;
+                }
+                layerCount++;
+                cipherCountInput.value = layerCount;
+
+                const layerDiv = document.createElement('div');
+                layerDiv.classList.add('layer');
+                layerDiv.setAttribute('id', 'layer-' + layerCount);
+                layerDiv.innerHTML = `
+                    <h3>Layer ${layerCount}</h3>
+                    <label for="cipher-${layerCount}">Cipher Type:</label>
+                    <select name="ciphers[]" id="cipher-${layerCount}" onchange="toggleKeyInput(${layerCount})">
+                        <option value="">-- Select Cipher --</option>
+                        <option value="caesar">Caesar</option>
+                        <option value="vigenere">Vigenere</option>
+                        <option value="monoalphabetic">Monoalphabetic</option>
+                        <option value="playfair">Playfair</option>
+                        <option value="railfence">Railfence</option>
+                        <option value="row_transposition">Row Transposition</option>
+                    </select>
+                    
+                    <div class="key-input" id="key-input-${layerCount}">
+                        <label for="key-${layerCount}">Key:</label>
+                        <input type="text" name="keys[]" id="key-${layerCount}">
+                    </div>
+                    <div class="key-int-input" id="key-int-input-${layerCount}">
+                        <label for="key_int-${layerCount}">Numeric Key/Parameter:</label>
+                        <input type="number" name="key_ints[]" id="key_int-${layerCount}">
+                    </div>
+                    <button type="button" class="removeLayerBtn" onclick="removeLayer(${layerCount})">Remove Layer</button>
+                `;
+                layersContainer.appendChild(layerDiv);
+                toggleKeyInput(layerCount); // Initial toggle based on default selection (if any)
+            }
+
+            window.toggleKeyInput = function(layerNum) {
+                const cipherSelect = document.getElementById(`cipher-${layerNum}`);
+                const keyInputDiv = document.getElementById(`key-input-${layerNum}`);
+                const keyIntInputDiv = document.getElementById(`key-int-input-${layerNum}`);
+                const keyField = document.getElementById(`key-${layerNum}`);
+                const keyIntField = document.getElementById(`key_int-${layerNum}`);
+
+
+                // Hide all by default
+                keyInputDiv.style.display = 'none';
+                keyIntInputDiv.style.display = 'none';
+                keyField.removeAttribute('required');
+                keyIntField.removeAttribute('required');
+                keyField.value = ''; // Clear previous values
+                keyIntField.value = '';
+
+
+                const selectedCipher = cipherSelect.value;
+                if (selectedCipher === "caesar" || selectedCipher === "railfence") {
+                    keyIntInputDiv.style.display = 'block';
+                    keyIntField.setAttribute('required', 'required');
+                    // For these, the string key is not used, so we can leave keys[] empty for this index or send a placeholder
+                    keyField.value = "N/A"; // Placeholder for keys[] array alignment
+                } else if (selectedCipher !== "") {
+                    keyInputDiv.style.display = 'block';
+                    keyField.setAttribute('required', 'required');
+                     // For these, the int key is not used
+                    keyIntField.value = "0"; // Placeholder for key_ints[] array alignment
+                }
+            }
+            
+            window.removeLayer = function(layerNum) {
+                const layerToRemove = document.getElementById(`layer-${layerNum}`);
+                if (layerToRemove) {
+                    layersContainer.removeChild(layerToRemove);
+                    cipherCountInput.value = layersContainer.getElementsByClassName('layer').length;
+                }
+            }
+
+
+            addLayerBtn.addEventListener('click', addLayer);
+            addLayer(); // Add one layer by default
+        });
+    </script>
+</body>
+</html>

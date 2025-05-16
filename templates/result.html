@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result - {{ .CipherName }}</title>
+    <style>
+        body {
+            font-family: 'Fira Mono', 'Consolas', 'Monaco', monospace;
+            margin: 0;
+            background: #0f2027;  /* fallback for old browsers */
+            background: linear-gradient(135deg, #0f2027 0%, #2c5364 100%);
+            color: #33ff33;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: rgba(10, 20, 10, 0.95);
+            padding: 32px 36px;
+            border-radius: 10px;
+            box-shadow: 0 0 24px #00ff99, 0 0 4px #33ff33;
+            width: 100%;
+            max-width: 650px;
+            border: 1.5px solid #33ff33;
+        }
+        h1 {
+            color: #00ff99;
+            text-align: center;
+            margin-bottom: 24px;
+            text-shadow: 0 0 8px #33ff33;
+            letter-spacing: 1px;
+        }
+        .result-item {
+            margin-bottom: 18px;
+            padding: 12px;
+            border: 1px solid #00ff99;
+            border-radius: 5px;
+            background: rgba(0, 30, 0, 0.7);
+            box-shadow: 0 0 8px #00ff9933;
+        }
+        .result-item strong {
+            color: #00ff99;
+            text-shadow: 0 0 4px #33ff33;
+        }
+        .result-item p {
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            color: #33ff33;
+            margin: 0;
+        }
+        .error {
+            color: #ff3333;
+            font-weight: bold;
+            text-shadow: 0 0 4px #ff3333;
+        }
+        .home-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 18px;
+            background: #111;
+            color: #00ff99;
+            text-decoration: none;
+            border-radius: 4px;
+            border: 1px solid #00ff99;
+            font-weight: bold;
+            box-shadow: 0 0 8px #00ff9955;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        }
+        .home-link:hover {
+            background: #00ff99;
+            color: #111;
+            box-shadow: 0 0 16px #00ff99;
+        }
+        .steps-container {
+            margin-top: 15px;
+        }
+        .step {
+            font-size: 1em;
+            color: #00ff99;
+            padding: 5px 0;
+            border-bottom: 1px solid #33ff3355;
+        }
+        .step:last-child {
+            border-bottom: none;
+        }
+        /* Output highlight */
+        .result-item[style] {
+            background-color: #002b36 !important;
+            border-color: #00ff99 !important;
+            box-shadow: 0 0 12px #00ff9999;
+        }
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            background: #111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00ff9955;
+            border-radius: 4px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Result: {{ .CipherName }}</h1>
+
+        {{ if .Error }}
+            <p class="error">Error: {{ .Error }}</p>
+        {{ else }}
+            <div class="result-item">
+                <strong>Operation:</strong> <p>{{ .Operation }}</p>
+            </div>
+            <div class="result-item">
+                <strong>Input Text:</strong> <p>{{ .InputText }}</p>
+            </div>
+            {{ if not .IsMultiLayer }}
+                {{ if .Key }}
+                <div class="result-item">
+                    <strong>Key:</strong> <p>{{ .Key }}</p>
+                </div>
+                {{ else if .KeyInt }}
+                 <div class="result-item">
+                    <strong>Key (Numeric):</strong> <p>{{ .KeyInt }}</p>
+                </div>
+                {{ end }}
+            {{ end }}
+             <div class="result-item" style="background-color: #002b36;">
+                <strong>Output Text:</strong> <p>{{ .OutputText }}</p>
+            </div>
+
+            {{ if .IsMultiLayer }}
+                {{ if .Steps }}
+                <div class="steps-container result-item">
+                    <strong>Processing Steps:</strong>
+                    {{ range .Steps }}
+                        <p class="step">{{ . }}</p>
+                    {{ end }}
+                </div>
+                {{ end }}
+            {{ end }}
+
+        {{ end }}
+        <br>
+        <a href="/" class="home-link">Back to Home</a>
+        {{ if .CipherName }}
+            {{ $cipherPath := replace (lower .CipherName) " " "_" }}
+            {{ if ne $cipherPath "multilayer_operation" }}
+                 <a href="/cipher/{{$cipherPath}}" class="home-link" style="background-color:#111; margin-left:10px;">Try {{.CipherName}} Again</a>
+            {{ else }}
+                 <a href="/multilayer" class="home-link" style="background-color:#111; margin-left:10px;">Try Multilayer Again</a>
+            {{ end }}
+        {{ end }}
+    </div>
+</body>
+</html>

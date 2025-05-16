@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Machine</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Fira Mono', 'Consolas', 'Courier New', monospace;
+            margin: 0;
+            background-color: #111;
+            color: #00ff00;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        h1 {
+            color: #00ff00;
+            text-align: center;
+            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+            letter-spacing: 2px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        li {
+            margin: 10px;
+        }
+        a {
+            text-decoration: none;
+            color: #111;
+            background-color: #00ff00;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: bold;
+            font-family: inherit;
+            box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+        }
+        a:hover {
+            background-color: #111;
+            color: #00ff00;
+            box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00;
+            border: 1px solid #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <h1>Crypto Machine</h1>
+    <ul>
+        <li><a href="/cipher/caesar">Caesar Cipher</a></li>
+        <li><a href="/cipher/vigenere">Vigenere Cipher</a></li>
+        <li><a href="/cipher/monoalphabetic">Monoalphabetic Cipher</a></li>
+        <li><a href="/cipher/playfair">Playfair Cipher</a></li>
+        <li><a href="/cipher/railfence">Railfence Cipher</a></li>
+        <li><a href="/cipher/row_transposition">Row Transposition Cipher</a></li>
+        <li><a href="/multilayer">Multilayer Cryptography</a></li>
+    </ul>
+</body>
+</html>
