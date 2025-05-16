@@ -1,1 +1,2 @@
-"# Crypto_Machine" 
+# Crypto_Machine
+![alt text](image.png)
